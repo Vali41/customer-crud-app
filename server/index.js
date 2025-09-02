@@ -57,32 +57,52 @@ app.post('/api/customers',(req,res)=>{
     })
 }) 
 
-app.get('/api/customers',(req,res)=>{
-    const {search,page=1,limit=10,sort='id',order='ASC'} = req.query;
-    const offset = (page -1) * limit;
+app.get('/api/customers', (req, res) => {
+    const { search, page = 1, limit = 10, sort = 'c.id', order = 'ASC' } = req.query;
+    const offset = (page - 1) * limit;
 
-    let sql = `SELECT * FROM customers`;
+    // 1. Start with a base query that JOINS customers and addresses.
+    // Use DISTINCT to prevent duplicate customers in results.
+    let sql = `
+        SELECT DISTINCT c.* FROM customers c
+        LEFT JOIN addresses a ON c.id = a.customer_id
+    `;
+    let countSql = `
+        SELECT COUNT(DISTINCT c.id) as count
+        FROM customers c
+        LEFT JOIN addresses a ON c.id = a.customer_id
+    `;
+
     const params = [];
 
-    if(search){
-        sql += ` WHERE (first_name LIKE ? OR last_name LIKE ?)`;
-        params.push(`%${search}%`, `%${search}%`);
+    if (search) {
+        // 2. Expand the WHERE clause to search across both tables.
+        const whereClause = ` WHERE (c.first_name LIKE ? OR c.last_name LIKE ? OR a.city LIKE ? OR a.state LIKE ? OR a.pin_code LIKE ?)`;
+        sql += whereClause;
+        countSql += whereClause;
+        // 3. Add the search parameter for each field you want to check.
+        const searchTerm = `%${search}%`;
+        params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
-    sql += ` ORDER BY ${sort} ${order === 'ASC' ? 'ASC' : 'DESC'}`;
+    // Sanitize sort column to prevent SQL injection
+    const allowedSortColumns = ['c.id', 'c.first_name', 'c.last_name'];
+    const safeSort = allowedSortColumns.includes(sort) ? sort : 'c.id';
+    const safeOrder = order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
-    sql += ` LIMIT ? OFFSET ?`;
-
+    sql += ` ORDER BY ${safeSort} ${safeOrder} LIMIT ? OFFSET ?`;
     params.push(parseInt(limit), parseInt(offset));
-
-    db.all(sql, params, (err,rows)=>{
-        if(err){
-            return res.status(500).json({error: err.message});
+    
+    // Execute the main query to get the paginated data
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
         }
-        db.get(`SELECT COUNT (*) as count FROM customers${search?` WHERE first_name LIKE ? OR last_name LIKE ?` : ''}`,search?[`%${search}%`,`%${search}%`]:[],
-            (err,countResult)=>{
-            if(err){
-                return res.status(400).json({error: err.message});
+
+        // Execute the count query with the same search parameters (excluding limit/offset)
+        db.get(countSql, params.slice(0, params.length - 2), (err, countResult) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
             }
             res.json({
                 message: 'Customers retrieved successfully',
@@ -92,8 +112,9 @@ app.get('/api/customers',(req,res)=>{
                 totalPages: Math.ceil(countResult.count / limit)
             });
         });
-    })
-})
+    });
+});
+
 
 app.get(`/api/customers/:id`,(req,res)=>{
     const {id} = req.params;
