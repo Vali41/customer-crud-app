@@ -96,11 +96,11 @@ const CustomerListPage = () => {
           <div className="card shadow-sm p-3">
             <div className="table-responsive">
               <table className='table table-hover table-striped'>
-                <thead className='bg-dark text-white'>
-                  <tr>
+                <thead className='bg-light text-white'>
+                  <tr className="">
                     <th scope="col" className='align-middle'>Name</th>
                     <th scope="col" className='align-middle'>Phone</th>
-                    <th scope="col" className='align-middle'>Actions</th>
+                    <th scope="col" className='align-end text-end'>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -108,7 +108,7 @@ const CustomerListPage = () => {
                     <CustomerListDetails 
                       key={eachCustomer.id} 
                       customer={eachCustomer} 
-                      onDelete={handleDelete} // Pass the delete handler down as a prop
+                      onDelete={handleDelete} 
                     />
                   ))}
                 </tbody>

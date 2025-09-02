@@ -10,10 +10,10 @@ const CustomerListDetails = ({ customer, onDelete }) => {
       <tr className="align-middle">
         <td className="align-middle">{customer.first_name} {customer.last_name}</td>
         <td className="align-middle">{customer.phone_number}</td>
-        <td className="text-end">
+        <td className="text-end align-middle">
           <button 
             onClick={() => navigate(`/customers/${customer.id}`)} 
-            className="btn btn-primary btn-sm me-2"
+            className="btn btn-primary btn-sm m-2 "
           >
             View
           </button>
