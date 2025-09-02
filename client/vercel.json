@@ -1,2 +1,8 @@
-git add vercel.json
-git commit -m "Add Vercel rewrite config for client-side routing"
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
