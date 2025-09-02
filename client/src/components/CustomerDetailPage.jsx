@@ -8,6 +8,9 @@ const CustomerDetailPage = () => {
   const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [addressToDeleteId, setAddressToDeleteId] = useState(null);
+  const [deleteMessage, setDeleteMessage] = useState('');
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -48,30 +51,56 @@ const CustomerDetailPage = () => {
     }
   }, [id]);
   
-  
-  const handleDeleteAddress = async (addressId) => {
-    if (window.confirm('Are you sure you want to delete this address?')) {
+  const handleDelete = (id) => {
+      setAddressToDeleteId(id);
+      setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
       try {
-        const response = await fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses/${addressId}`, {
+        const response = await fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses/${addressToDeleteId}`, {
           method: 'DELETE',
         });
-
         if (!response.ok) {
-
-          const errorData = await response.json();
-          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+          throw new Error('Failed to delete address');
         }
+        // Update state to remove the deleted address
+        setAddresses(addresses.filter(address => address.id !== addressToDeleteId));
+        setDeleteMessage('Address successfully deleted!');
+        setTimeout(() => setDeleteMessage(''), 3000); // Clear message after 3 seconds
+      } catch (error) {
+        console.error('Error deleting address:', error);
+        setDeleteMessage('Error deleting address.');
+        setTimeout(() => setDeleteMessage(''), 3000); // Clear message after 3 seconds
+      } finally {
+        setShowDeleteConfirm(false);
+        setAddressToDeleteId(null);
+      }
+    };
+
+  // const handleDeleteAddress = async (addressId) => {
+  //   if (window.confirm('Are you sure you want to delete this address?')) {
+  //     try {
+  //       const response = await fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses/${addressId}`, {
+  //         method: 'DELETE',
+  //       });
+
+  //       if (!response.ok) {
+
+  //         const errorData = await response.json();
+  //         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+  //       }
 
         
-        setAddresses(prevAddresses => prevAddresses.filter(address => address.id !== addressId));
+  //       setAddresses(prevAddresses => prevAddresses.filter(address => address.id !== addressId));
         
-      } catch (err) {
-        console.error('Error deleting address:', err);
+  //     } catch (err) {
+  //       console.error('Error deleting address:', err);
         
-        alert(`Failed to delete address: ${err.message}`);
-      }
-    }
-  };
+  //       alert(`Failed to delete address: ${err.message}`);
+  //     }
+  //   }
+  // };
 
   
   const handleEditAddress = (address) => {
@@ -81,7 +110,7 @@ const CustomerDetailPage = () => {
   if (loading) {
     return (
       <div className="container mt-5 text-center">
-        <p>Loading customer details...</p>
+        <p>Loading Address details...</p>
       </div>
     );
   }
@@ -110,6 +139,11 @@ const CustomerDetailPage = () => {
       <div className="container">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className='text-primary fw-bold'>Customer Details</h1>
+           {deleteMessage && (
+            <div className="alert alert-success text-center" role="alert">
+              {deleteMessage}
+            </div>
+          )}
           <button onClick={() => navigate('/')} className="btn btn-dark">Back to List</button>
         </div>
         <div className="card shadow-sm">
@@ -144,38 +178,74 @@ const CustomerDetailPage = () => {
           <p>No addresses found for this customer.</p>
         ) : (
           <div className="table-responsive">
-            <table className="table table-striped table-hover">
-              <thead className="table-dark">
-                <tr>
-                  <th>Address Details</th>
-                  <th>City</th>
-                  <th>State</th>
-                  <th>Pin Code</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {addresses.map((address) => (
-                  <tr key={address.id}>
-                    <td>{address.address_details}</td>
-                    <td>{address.city}</td>
-                    <td>{address.state}</td>
-                    <td>{address.pin_code}</td>
-                    <td>
-                      <button className="btn btn-sm btn-primary me-2" onClick={() => handleEditAddress(address)}>
-                        Edit
-                      </button>
-                      <button className="btn btn-sm btn-danger" onClick={() => handleDeleteAddress(address.id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+  <table className="table table-striped table-hover">
+    <thead className="table-dark">
+      <tr>
+        <th>Address Details</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Pin Code</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {addresses.map((address) => (
+        <tr key={address.id}>
+          <td>{address.address_details}</td>
+          <td>{address.city}</td>
+          <td>{address.state}</td>
+          <td>{address.pin_code}</td>
+          <td>
+            <button
+              className="btn btn-sm btn-primary me-2"
+              onClick={() => handleEditAddress(address)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-sm btn-danger"
+              onClick={() => handleDelete(address.id)}
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
         )}
       </div>
+      {showDeleteConfirm && (
+          <div className="modal d-block" tabIndex="-1">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Confirm Delete</h5>
+                </div>
+                <div className="modal-body">
+                  <p>Are you sure you want to delete this address?</p>
+                </div>
+                <div className="modal-footer">
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="button" 
+                    className="btn btn-danger" 
+                    onClick={confirmDelete}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 };

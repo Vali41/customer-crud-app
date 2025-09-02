@@ -1,8 +1,8 @@
 // client/src/App.js
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CustomerListPage from './pages/CustomerListPage';
-import CustomerDetailPage from './pages/CustomerDetailPage';
-import CustomerFormPage from './pages/CustomerFormPage';
+import CustomerListPage from './components/CustomerListPage';
+import CustomerDetailPage from './components/CustomerDetailPage';
+import CustomerFormPage from './components/CustomerFormPage';
 import AddressFormPage from './components/AddressFormPage';
 
 function App() {

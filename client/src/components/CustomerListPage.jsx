@@ -96,7 +96,7 @@ const CustomerListPage = () => {
           <div className="card shadow-sm p-3">
             <div className="table-responsive">
               <table className='table table-hover table-striped'>
-                <thead className='bg-light text-white'>
+                <thead className='table-primary'>
                   <tr className="">
                     <th scope="col" className='align-middle'>Name</th>
                     <th scope="col" className='align-middle'>Phone</th>
