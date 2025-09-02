@@ -34,7 +34,8 @@ const CustomerDetailPage = () => {
 
         const customerData = await customerResponse.json();
         const addressData = await addressResponse.json();
-
+        console.log('Fetched customer data:', customerData);
+        console.log('Fetched address data:', addressData);
         setCustomer(customerData.data);
         setAddresses(addressData.data);
       } catch (err) {
@@ -78,31 +79,6 @@ const CustomerDetailPage = () => {
       }
     };
 
-  // const handleDeleteAddress = async (addressId) => {
-  //   if (window.confirm('Are you sure you want to delete this address?')) {
-  //     try {
-  //       const response = await fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses/${addressId}`, {
-  //         method: 'DELETE',
-  //       });
-
-  //       if (!response.ok) {
-
-  //         const errorData = await response.json();
-  //         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-  //       }
-
-        
-  //       setAddresses(prevAddresses => prevAddresses.filter(address => address.id !== addressId));
-        
-  //     } catch (err) {
-  //       console.error('Error deleting address:', err);
-        
-  //       alert(`Failed to delete address: ${err.message}`);
-  //     }
-  //   }
-  // };
-
-  
   const handleEditAddress = (address) => {
     navigate(`/customers/${id}/addresses/edit/${address.id}`, { state: { address } });
   };
@@ -178,16 +154,16 @@ const CustomerDetailPage = () => {
           <p>No addresses found for this customer.</p>
         ) : (
           <div className="table-responsive">
-  <table className="table table-striped table-hover">
-    <thead className="table-dark">
-      <tr>
-        <th>Address Details</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Pin Code</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+          <table className="table table-striped table-hover">
+          <thead className="table-dark">
+          <tr>
+              <th>Address Details</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Pin Code</th>
+              <th>Actions</th>
+          </tr>
+        </thead>
     <tbody>
       {addresses.map((address) => (
         <tr key={address.id}>

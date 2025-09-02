@@ -5,8 +5,8 @@ const AddressFormPage = () => {
 	const { id, addressId } = useParams(); // 'id' is customerId
 	const location = useLocation();
 	const { state } = location;
-
-	console.log({ state });
+	const [isSaved, setIsSaved] = useState(false);
+	const [successMessage, setSuccessMessage] = useState("");
 
 	const [formData, setFormData] = useState({
 		address_details: "",
@@ -84,6 +84,9 @@ const AddressFormPage = () => {
 			setErrors({ form: error.message });
 		} finally {
 			setLoading(false);
+			setIsSaved(true);
+			setSuccessMessage(`Address ${isEditMode ? "updated" : "created"} successfully!`);
+			setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds	
 		}
 	};
 
@@ -112,6 +115,13 @@ const AddressFormPage = () => {
 						<h1 className="text-center mb-4 fw-bold text-primary">
 							{isEditMode ? "Edit Address" : "Add New Address"}
 						</h1>
+						<div className="text-center">
+							{isSaved && (
+								<div className="alert alert-success">
+									{successMessage}
+								</div>
+							)}
+						</div>
 						{loading ? (
 							<div className="text-center p-5">
 								<div

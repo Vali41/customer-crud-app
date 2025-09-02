@@ -55,11 +55,11 @@ const CustomerListPage = () => {
         // Update state to remove the deleted customer
         setCustomers(customers.filter(customer => customer.id !== customerToDeleteId));
         setDeleteMessage('Customer successfully deleted!');
-        setTimeout(() => setDeleteMessage(''), 3000); // Clear message after 3 seconds
+        setTimeout(() => setDeleteMessage(''), 3000); 
       } catch (error) {
         console.error('Error deleting customer:', error);
         setDeleteMessage('Error deleting customer.');
-        setTimeout(() => setDeleteMessage(''), 3000); // Clear message after 3 seconds
+        setTimeout(() => setDeleteMessage(''), 3000); 
       } finally {
         setShowDeleteConfirm(false);
         setCustomerToDeleteId(null);
