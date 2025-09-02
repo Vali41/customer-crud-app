@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"; // Assuming you use react-router-dom
+import { useNavigate, useParams } from "react-router-dom"; 
 
 const CustomerDetailPage = () => {
   const { id } = useParams();
@@ -11,15 +11,15 @@ const CustomerDetailPage = () => {
 
   useEffect(() => {
     const fetchCustomer = async () => {
-      // Reset state on ID change before fetching
+    
       setLoading(true);
       setError(null);
 
       try {
-        // Fetch customer and addresses in parallel for better performance
+        
         const [customerResponse, addressResponse] = await Promise.all([
-          fetch(`http://localhost:5000/api/customers/${id}`),
-          fetch(`http://localhost:5000/api/customers/${id}/addresses`),
+          fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}`),
+          fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses`),
         ]);
 
         if (!customerResponse.ok) {
@@ -48,36 +48,32 @@ const CustomerDetailPage = () => {
     }
   }, [id]);
   
-  // --- FIX FOR DELETE ACTION ---
+  
   const handleDeleteAddress = async (addressId) => {
     if (window.confirm('Are you sure you want to delete this address?')) {
       try {
-        // 1. Use the correct API endpoint from your backend server.
-        // 2. Use the actual `addressId` variable in the URL.
-        const response = await fetch(`http://localhost:5000/api/addresses/${addressId}`, {
+        const response = await fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses/${addressId}`, {
           method: 'DELETE',
         });
 
         if (!response.ok) {
-          // Provide more specific error feedback
+
           const errorData = await response.json();
           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
 
-        // 3. Update the state only AFTER the API call is successful.
+        
         setAddresses(prevAddresses => prevAddresses.filter(address => address.id !== addressId));
         
       } catch (err) {
         console.error('Error deleting address:', err);
-        // 4. Use a non-disruptive alert for action errors instead of replacing the page.
+        
         alert(`Failed to delete address: ${err.message}`);
       }
     }
   };
 
-  // --- EDIT ACTION LOGIC ---
-  // This function is correct. It navigates to the edit page.
-  // The actual editing will happen in the component for that route.
+  
   const handleEditAddress = (address) => {
     navigate(`/customers/${id}/addresses/edit/${address.id}`, { state: { address } });
   };
@@ -100,7 +96,7 @@ const CustomerDetailPage = () => {
   }
   
   if (!customer) {
-    // This handles the case where loading is false but customer is still null
+   
     return (
       <div className="container mt-5 text-center">
         <p>Customer not found.</p>

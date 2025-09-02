@@ -28,37 +28,6 @@ const AddressFormPage = () => {
 		});
 	}, [JSON.stringify(state?.address || {})]);
 
-	// useEffect(() => {
-	//     // Only fetch data if we are in "edit" mode.
-	//     if (isEditMode) {
-	//         setLoading(true);
-
-	//         fetch(`http://localhost:5000/api/customers/${id}/addresses/${addressId}`)
-	//             .then(response => {
-	//                 if (!response.ok) {
-	//                     // If the response is not OK, parse the JSON to get the server's error message.
-	//                     return response.json().then(err => { throw new Error(err.error || 'Address not found'); });
-	//                 }
-	//                 return response.json();
-	//             })
-	//             .then(data => {
-	//                 // Pre-fill the form with the fetched data.
-	//                 if (data && data.data) {
-	//                     setFormData({
-	//                         address_details: data.data.address_details || '',
-	//                         city: data.data.city || '',
-	//                         state: data.data.state || '',
-	//                         pin_code: data.data.pin_code || ''
-	//                     });
-	//                 }
-	//             })
-	//             .catch(error => {
-	//                 console.error('Error fetching address:', error);
-	//                 setErrors({ form: error.message || 'Failed to load address details.' });
-	//             })
-	//             .finally(() => setLoading(false));
-	//     }
-	// }, [addressId, id, isEditMode]); // Effect depends on the addressId
 
 	const validateForm = () => {
 		const newErrors = {};
@@ -89,8 +58,8 @@ const AddressFormPage = () => {
 
 		// This URL is correct for both creating (POST) and updating (PUT) an address.
 		const url = isEditMode
-			? `http://localhost:5000/api/customers/${id}/addresses/${addressId}`
-			: `http://localhost:5000/api/customers/${id}/addresses`;
+			? `https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses/${addressId}`
+			: `https://customer-crud-app-backend-project.onrender.com/api/customers/${id}/addresses`;
 
 		const method = isEditMode ? "PUT" : "POST";
 
@@ -107,7 +76,8 @@ const AddressFormPage = () => {
 			if (!response.ok) {
 				throw new Error(result.error || "Failed to save address.");
 			}
-			// Navigate back to the customer detail page after a successful save.
+
+			// If the request was successful, navigate back to the customer detail page.
 			window.location.href = `/customers/${id}`;
 		} catch (error) {
 			console.error("Error saving address:", error);

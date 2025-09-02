@@ -19,7 +19,7 @@ const CustomerListPage = () => {
     useEffect(() => {
       const fetchCustomers = async () => {
       try {
-        const url = new URL('http://localhost:5000/api/customers');
+        const url = new URL('https://customer-crud-app-backend-project.onrender.com/api/customers');
         url.searchParams.append('search', search);
         url.searchParams.append('page', page);
         url.searchParams.append('limit', 10);
@@ -46,7 +46,7 @@ const CustomerListPage = () => {
     // Handler to perform the delete after confirmation
     const confirmDelete = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/customers/${customerToDeleteId}`, {
+        const response = await fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${customerToDeleteId}`, {
           method: 'DELETE',
         });
         if (!response.ok) {

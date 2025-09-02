@@ -19,7 +19,7 @@ const CustomerFormPage = () => {
       // If there's an ID in the URL, fetch the customer data
       if (id) {
         setLoading(true);
-        fetch(`http://localhost:5000/api/customers/${id}`)
+        fetch(`https://customer-crud-app-backend-project.onrender.com/api/customers/${id}`)
           .then(response => {
             if (!response.ok) {
               throw new Error('Customer not found');
@@ -63,7 +63,7 @@ const CustomerFormPage = () => {
       e.preventDefault();
       if (!validateForm()) return;
       try {
-        const url = `http://localhost:5000/api/customers${id ? `/${id}` : ''}`;
+        const url = `https://customer-crud-app-backend-project.onrender.com/api/customers${id ? `/${id}` : ''}`;
         const method = id ? 'PUT' : 'POST';
         const response = await fetch(url, {
           method: method,
