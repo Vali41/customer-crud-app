@@ -1,0 +1,64 @@
+### Test POST /api/customers
+POST http://localhost:5000/api/customers
+Content-Type: application/json
+
+{
+    "first_name": "Shaik",
+    "last_name": "Sha",
+    "phone_number": "9999999999"
+}
+
+### Get All Customers (with pagination)
+GET http://localhost:5000/api/customers?page=1&limit=5
+
+### Get Customers with Search Filter
+GET http://localhost:5000/api/customers?search=john
+
+### Get Customers with Sorting
+GET http://localhost:5000/api/customers?sort=first_name&order=DESC
+
+### Get Customer by ID
+GET http://localhost:5000/api/customers/2
+
+### Update Customer by ID
+PUT http://localhost:5000/api/customers/2
+Content-Type: application/json
+
+{
+    "first_name": "Shaik",
+    "last_name": "Sha",
+    "phone_number": "9999999999"
+}
+
+### Delete Customer by ID
+DELETE http://localhost:5000/api/customers/1
+
+### Address API
+
+### Create Address
+POST http://localhost:5000/api/customers/1/addresses
+Content-Type: application/json
+
+{
+    "address_details": "123 Main St",
+    "city": "Anytown",
+    "state": "WCDC",
+    "pin_code": "12345"
+}
+
+### Get All Addresses for a Customer
+GET http://localhost:5000/api/customers/1/addresses
+
+### Update Address by ID
+PUT http://localhost:5000/api/customers/1/addresses/4
+Content-Type: application/json
+
+{
+    "address_details": "456 Elm St",
+    "city": "Othertown",
+    "state": "NY",
+    "pin_code": "67890"
+}
+
+### Delete Address by ID
+DELETE http://localhost:5000/api/customers/:id/addresses/:addressId
